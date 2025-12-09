@@ -1,0 +1,19 @@
+flow_id,block_name,trigger,text,buttons,button_payloads,variables_used,max_repeats,notes
+shared,welcome,entry,"Hi! I’m your assistant for lesson plans, teacher training, and school tools. I’ll send something useful right now.",Start,start,,1,Send immediately on entry
+shared,role_selection,need_role,"What’s your role?",Teacher|Principal|School Owner,role_teacher|role_principal|role_owner,,1,"If buttons fail, accept 1/2/3 free text"
+shared,role_fallback_prompt,need_role_fallback,"Reply 1 for Teacher, 2 for Principal, 3 for Owner.",,,role,1,Send if role buttons not used
+shared,city_capture,need_city,"Which city is your school in?",Lahore|Karachi|Islamabad|Rawalpindi|Faisalabad|Peshawar|Quetta|Multan|Other,city_lahore|city_karachi|city_isb|city_rwp|city_fsd|city_pew|city_qta|city_mtn|city_other,city,1,If Other selected request free text next
+shared,city_other,need_city_other,"Please type your city.",,,city,1,Only when city_other chosen
+shared,school_capture,need_school,"Type your full school name (no abbreviations).",,,school,1,Validate length >=3
+app_lp,lp_sample,send_value,"Here’s a Grade {grade} {subject} lesson plan for Page {page}: {lp_link}",,,grade|subject|page|lp_link,2,Primary value drop for Flow A
+app_lp,training_tip,micro_engage,"60-sec tip for your Grade {grade} {subject} class: {tip_link}",Register on Web|Get another LP,register|more_lp,grade|subject|tip_link|registration_link,2,Secondary value drop
+web_reg,starter_pack,send_value,"Here’s a preview: Ops Checklist + LP pack for your school: {preview_link}",Register on Web,register,preview_link|registration_link,1,First value for principals/owners
+lp_gen,lp_sample,send_value,"Here’s a Grade {grade} {subject} lesson plan for Page {page}: {lp_link}",Get unlimited LPs → Register,register,grade|subject|page|lp_link|registration_link,2,Generated from user page input
+lp_gen,variant_prompt,micro_engage,"Does this fit your class? Need easier or harder?",Easier|Harder|Looks good,easier|harder|good,grade|subject|page,1,Adjusts follow-up LP
+rumi,rumi_preview,send_value,"Here’s a quick answer from Rumi: {short_answer}",Open Rumi|See LP sample,open_rumi|more_lp,short_answer|rumi_link|lp_link,1,Entry value for Rumi flow
+shared,registration_cta,registration_prompt,"Get full access to all LPs and training. Register your school here: {registration_link}",Register on Web|Get another LP,register|more_lp,registration_link,3,Use after lead fields captured
+shared,nudge_n1,reminder_n1,"Your LP/training is ready—unlock full access by registering: {registration_link}",Register on Web,register,registration_link,1,Send 30–60 minutes after prompt
+shared,nudge_n2,reminder_n2,"Keep getting new LPs weekly—register now: {registration_link}",Register on Web,register,registration_link,1,Send 24h after prompt
+shared,nudge_n3,reminder_n3,"Need help? We can set this up for your school. Register here or ask for assistance: {registration_link}",Register on Web|Talk to us,register|talk_human,registration_link,1,Send 48–72h after prompt
+shared,opt_out,opt_out,"Done. You won’t get more messages. Reply START to continue anytime.",,, ,1,Honor stop/unsubscribe/quit
+

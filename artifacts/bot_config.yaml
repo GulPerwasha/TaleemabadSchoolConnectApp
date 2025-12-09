@@ -1,0 +1,155 @@
+meta:
+  language: en
+  registration_url: "https://example.com/register"  # replace with live form
+  rumi_url: "https://example.com/rumi"              # replace with live Rumi entry
+
+flows:
+  app_lp:
+    entry_tag: app_lp
+    first_block: lp_sample
+    value_blocks: [lp_sample, training_tip]
+    description: "App install/QR → teacher-first LP + training tip"
+  web_reg:
+    entry_tag: web_reg
+    first_block: starter_pack
+    value_blocks: [starter_pack]
+    description: "Website click-to-WhatsApp → principals/owners"
+  lp_gen:
+    entry_tag: lp_gen
+    first_block: lp_sample
+    value_blocks: [lp_sample]
+    description: "Book page QR → LP generator"
+  rumi:
+    entry_tag: rumi
+    first_block: rumi_preview
+    value_blocks: [rumi_preview]
+    description: "Rumi helper → AI redirect with fallback LP"
+
+lead_fields_required_before_registration:
+  - role
+  - school
+  - city
+  - phone  # auto-captured; confirm only if mismatch
+
+timers:
+  n1_delay_minutes: 45     # acceptable range 30–60
+  n2_delay_hours: 24
+  n3_delay_hours: 48       # acceptable range up to 72
+
+throttles:
+  max_value_drops_before_reprompt: 2
+
+utm_rules:
+  registration_params:
+    utm_source: whatsapp
+    utm_medium: bot
+    utm_campaign: "{flow_id}"
+    utm_content: "{source_tag}"
+    phone: "{phone}"
+    role: "{role}"
+    city: "{city}"
+    school: "{school}"
+    grade: "{grade}"
+    subject: "{subject}"
+    page: "{page}"
+  rumi_params:
+    phone: "{phone}"
+    role: "{role}"
+    city: "{city}"
+    school: "{school}"
+    source: "{flow_id}"
+
+states:
+  - new
+  - welcomed
+  - role_captured
+  - value_sent
+  - micro_engaged
+  - lead_partial
+  - lead_complete
+  - registration_prompted
+  - registration_clicked
+  - registration_confirmed
+  - rumi_redirected
+  - inactive
+  - stopped
+
+transitions:
+  entry:
+    from: new
+    to: welcomed
+    actions:
+      - send: welcome
+      - if_missing: role -> send role_selection (or after first value per experiment)
+      - else: send first_block for flow_id
+  role_captured:
+    from: welcomed
+    to: role_captured
+    actions:
+      - send: first value block for flow_id
+  value_delivered:
+    from: role_captured
+    to: value_sent
+    actions:
+      - send: micro_engage prompt (e.g., grade/subject/page suitability)
+  lead_completion_gate:
+    from: value_sent
+    to: lead_partial or lead_complete
+    actions:
+      - prompt missing fields among role, school, city
+  registration_prompt:
+    from: lead_complete
+    to: registration_prompted
+    actions:
+      - send: registration_cta
+      - schedule: nudge_n1, nudge_n2, nudge_n3 (cancel on confirm/stop)
+  registration_click:
+    from: registration_prompted
+    to: registration_clicked
+    actions:
+      - wait for confirmation webhook/pixel if available
+  registration_confirm:
+    from: registration_clicked
+    to: registration_confirmed
+    actions:
+      - cancel_nudges: true
+      - send: thank-you or starter pack link (optional)
+  rumi_flow:
+    from: any
+    to: rumi_redirected
+    actions:
+      - ensure lead fields captured
+      - send: rumi link with params
+      - keep reminders active unless stopped
+  inactivity:
+    from: registration_prompted
+    to: inactive
+    actions:
+      - after n3 if no response; stop nudges
+  stop:
+    from: any
+    to: stopped
+    actions:
+      - send: opt_out
+      - cancel_nudges: true
+
+validation:
+  role:
+    buttons: [role_teacher, role_principal, role_owner]
+    numeric_fallback: { "1": "role_teacher", "2": "role_principal", "3": "role_owner" }
+  city:
+    buttons: [city_lahore, city_karachi, city_isb, city_rwp, city_fsd, city_pew, city_qta, city_mtn, city_other]
+    other_fallback: free_text
+  school:
+    min_length: 3
+  opt_out_keywords: [stop, unsubscribe, quit]
+
+reminders:
+  sequence:
+    - block: nudge_n1
+      delay: n1_delay_minutes
+    - block: nudge_n2
+      delay: n2_delay_hours
+    - block: nudge_n3
+      delay: n3_delay_hours
+

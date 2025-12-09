@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Funnel Preview</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Unified Educator Funnel — Mock Chat</h1>
+      <div class="controls">
+        <label for="flowSelect">Flow</label>
+        <select id="flowSelect"></select>
+        <button id="resetBtn">Reset Flow</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="chat" class="chat"></div>
+      <div id="buttons" class="buttons"></div>
+      <form id="inputForm" class="input-form">
+        <input id="userInput" type="text" placeholder="Type reply or click a button" autocomplete="off" />
+        <button type="submit">Send</button>
+      </form>
+    </main>
+
+    <footer>
+      <p>Local preview only. No messages are sent to WhatsApp.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
