@@ -53,6 +53,129 @@ function welcomeInteractive() {
   };
 }
 
+function teacherFlowMessages() {
+  return [
+    {
+      type: "interactive",
+      interactive: {
+        type: "button",
+        body: {
+          text: "Great! Thanks for teaching. I’ll share a free lesson plan now—what grade/subject?",
+        },
+        action: {
+          buttons: [
+            { type: "reply", reply: { id: "grade_1_3", title: "Grade 1-3" } },
+            { type: "reply", reply: { id: "grade_4_6", title: "Grade 4-6" } },
+            { type: "reply", reply: { id: "grade_7_8", title: "Grade 7-8" } },
+          ],
+        },
+      },
+    },
+    {
+      type: "text",
+      text: {
+        preview_url: true,
+        body: "Here’s a sample lesson plan for your class:\nhttps://tb-compliance-manager.replit.app/auth/lp/sample.pdf",
+      },
+    },
+    {
+      type: "text",
+      text: {
+        preview_url: false,
+        body: "What’s your school name? And which city are you in? (Reply with both.)",
+      },
+    },
+    {
+      type: "interactive",
+      interactive: {
+        type: "button",
+        body: { text: "Want the full library and AI help?" },
+        action: {
+          buttons: [
+            {
+              type: "url",
+              url: "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=teacher_app",
+              title: "Install App 📱",
+            },
+            {
+              type: "url",
+              url: "https://hellorumi.ai/?source=teacher&role=teacher",
+              title: "Open Rumi 🤖",
+            },
+            { type: "reply", reply: { id: "more_lp", title: "Another LP" } },
+          ],
+        },
+      },
+    },
+  ];
+}
+
+function headFlowMessages() {
+  return [
+    {
+      type: "interactive",
+      interactive: {
+        type: "button",
+        body: {
+          text: "Welcome! I’ll share compliance and starter resources right away. Which do you want first?",
+        },
+        action: {
+          buttons: [
+            { type: "reply", reply: { id: "compliance_hub", title: "View Compliance Hub" } },
+            { type: "reply", reply: { id: "starter_pack", title: "Starter Pack" } },
+          ],
+        },
+      },
+    },
+    {
+      type: "text",
+      text: {
+        preview_url: false,
+        body: "What’s your school name? And which city? (Reply with both.)",
+      },
+    },
+    {
+      type: "text",
+      text: {
+        preview_url: false,
+        body: "About how many students? Which board/type? (e.g., 500, Cambridge)",
+      },
+    },
+    {
+      type: "interactive",
+      interactive: {
+        type: "button",
+        body: { text: "Here you go—open the hub or AI support." },
+        action: {
+          buttons: [
+            {
+              type: "url",
+              url: "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=head_compliance",
+              title: "Compliance Hub 🏫",
+            },
+            {
+              type: "url",
+              url: "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=head_starter",
+              title: "Starter Pack 📘",
+            },
+            {
+              type: "url",
+              url: "https://hellorumi.ai/?source=head&role=head",
+              title: "Open Rumi 🤖",
+            },
+          ],
+        },
+      },
+    },
+  ];
+}
+
+async function sendSequence(to, messages) {
+  for (const msg of messages) {
+    await sendMessage(to, msg);
+  }
+}
+
 // GET: verification handshake for Meta
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
@@ -86,7 +209,20 @@ export async function POST(req) {
           // Avoid echo loops: do not respond to our own business number
           if (!from) continue;
 
-          // If interactive reply, we could branch later; for now send welcome if no prior state.
+          const interactiveId =
+            message.interactive?.button_reply?.id ||
+            message.interactive?.list_reply?.id;
+
+          if (interactiveId === "role_teacher") {
+            await sendSequence(from, teacherFlowMessages());
+            continue;
+          }
+          if (interactiveId === "role_head" || interactiveId === "role_owner") {
+            await sendSequence(from, headFlowMessages());
+            continue;
+          }
+
+          // default: send role selection welcome
           if (message.type === "text" || message.type === "interactive") {
             await sendMessage(from, welcomeInteractive());
           }
