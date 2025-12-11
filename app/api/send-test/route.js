@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import { NextResponse } from "next/server";
 
 const WABA_TOKEN = process.env.WABA_ACCESS_TOKEN;
@@ -5,6 +7,13 @@ const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 const GRAPH_URL = (id) => `https://graph.facebook.com/v19.0/${id}/messages`;
 
 export async function POST(req) {
+  let body;
+  try {
+    body = await req.json();
+  } catch (err) {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
   if (!WABA_TOKEN || !PHONE_NUMBER_ID) {
     return NextResponse.json(
       { error: "Missing WABA_ACCESS_TOKEN or PHONE_NUMBER_ID" },
@@ -12,7 +21,7 @@ export async function POST(req) {
     );
   }
 
-  const { to, template_name = "funnel_nudge_n1", link } = await req.json();
+  const { to, template_name = "funnel_nudge_n1", link } = body || {};
   if (!to) {
     return NextResponse.json({ error: "Missing 'to' number" }, { status: 400 });
   }
