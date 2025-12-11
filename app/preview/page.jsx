@@ -3,17 +3,26 @@
 import { useEffect, useMemo, useState } from "react";
 
 const flows = {
-  app_lp: {
-    name: "Flow A — App LP & Training (Teacher-first)",
+  teacher: {
+    name: "Teacher Flow",
     script: [
       {
         bot: true,
-        text: "Hi! I’m your assistant for lesson plans, teacher training, and school tools. I’ll send something useful right now.\nWhat’s your role?",
-        buttons: ["Teacher", "Principal", "School Owner"],
+        text: "Hi there! We’re excited you’re here. I can share lesson plans, training, and AI support. First, choose your role.",
+        buttons: ["Teacher 👩‍🏫", "Headteacher / Principal 🏫", "School Owner 🧑‍💼"],
       },
       {
         bot: true,
-        text: "Which city is your school in?",
+        text: "Great! Thanks for teaching. I’ll share a free lesson plan now—what grade/subject?",
+        buttons: ["Grade 1-3", "Grade 4-6", "Grade 7-8", "Other"],
+      },
+      {
+        bot: true,
+        text: "Here’s a sample lesson plan for your class:\nhttps://tb-compliance-manager.replit.app/auth/lp/sample.pdf",
+      },
+      {
+        bot: true,
+        text: "What’s your school name? And which city are you in?",
         buttons: [
           "Lahore",
           "Karachi",
@@ -25,70 +34,48 @@ const flows = {
           "Multan",
           "Other",
         ],
-      },
-      {
-        bot: true,
-        text: "Type your full school name (no abbreviations).",
         expectsInput: true,
         suggested: "City Star School",
       },
       {
         bot: true,
-        text: "Here’s a Grade 4 Math lesson plan for Page 45:\nhttps://tb-compliance-manager.replit.app/auth/lp/grade4-math-45.pdf",
-      },
-      {
-        bot: true,
-        text: "60-sec tip for your Grade 4 Math class:\nhttps://tb-compliance-manager.replit.app/auth/training/grade4-math-tip.mp4",
-      },
-      {
-        bot: true,
-        text: "Get full access to all LPs and training. Register your school here:",
-        buttons: ["Register on Web", "Get another LP"],
+        text: "Want the full library and AI help?",
+        buttons: ["Install App 📱", "Open Rumi 🤖", "Another LP"],
         links: {
-          "Register on Web":
-            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=app_lp",
+          "Install App 📱":
+            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=teacher_app",
+          "Open Rumi 🤖":
+            "https://hellorumi.ai/?source=teacher&phone=USER_PHONE&role=teacher&city=Lahore&school=City%20Star%20School",
         },
       },
       {
         bot: true,
-        text: "Reminder N1 (45m): Your LP/training is ready—unlock full access by registering.",
-        buttons: ["Register on Web"],
-        links: {
-          "Register on Web":
-            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=app_lp",
-        },
+        text: "Nudge (45m): Want to continue where you left off?",
+        buttons: ["Yes, continue", "Start over"],
       },
       {
         bot: true,
-        text: "Reminder N2 (24h): Keep getting new LPs weekly—register now.",
-        buttons: ["Register on Web"],
-        links: {
-          "Register on Web":
-            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=app_lp",
-        },
-      },
-      {
-        bot: true,
-        text: "Reminder N3 (48h): Need help? We can set this up for your school.",
-        buttons: ["Register on Web", "Talk to us"],
-        links: {
-          "Register on Web":
-            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=app_lp",
-        },
+        text: "Nudge (24h): Ready to get full access?",
+        buttons: ["Yes, continue", "Start over"],
       },
     ],
   },
-  web_reg: {
-    name: "Flow B — Website → School Registration (Principal/Owner)",
+  head: {
+    name: "Headteacher / Principal / Owner Flow",
     script: [
       {
         bot: true,
-        text: "Hi! I’m your assistant for lesson plans, training, and school tools.\nWhat’s your role?",
-        buttons: ["Teacher", "Principal", "School Owner"],
+        text: "Hi there! We’re excited you’re here. I can share compliance tools, starter packs, and AI support. First, choose your role.",
+        buttons: ["Teacher 👩‍🏫", "Headteacher / Principal 🏫", "School Owner 🧑‍💼"],
       },
       {
         bot: true,
-        text: "Which city is your school in?",
+        text: "Welcome! I’ll share compliance and starter resources right away. Which do you want first?",
+        buttons: ["View Compliance Hub", "Starter Pack"],
+      },
+      {
+        bot: true,
+        text: "What’s your school name? And which city?",
         buttons: [
           "Lahore",
           "Karachi",
@@ -100,171 +87,43 @@ const flows = {
           "Multan",
           "Other",
         ],
-      },
-      {
-        bot: true,
-        text: "Type your full school name (no abbreviations).",
         expectsInput: true,
         suggested: "Lighthouse Academy",
       },
       {
         bot: true,
-        text: "Here’s a preview: Ops Checklist + LP pack for your school:\nhttps://tb-compliance-manager.replit.app/auth/starter-pack/preview.pdf",
+        text: "About how many students? Which board/type?",
+        buttons: ["Cambridge", "Matric", "IB", "Other"],
       },
       {
         bot: true,
-        text: "Register your school to get the full pack.",
-        buttons: ["Register on Web", "Talk to us"],
+        text: "Here you go—open the hub or AI support.",
+        buttons: ["Compliance Hub 🏫", "Starter Pack 📘", "Open Rumi 🤖"],
         links: {
-          "Register on Web":
-            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=web_reg",
+          "Compliance Hub 🏫":
+            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=head_compliance",
+          "Starter Pack 📘":
+            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=head_starter",
+          "Open Rumi 🤖":
+            "https://hellorumi.ai/?source=head&phone=USER_PHONE&role=head&city=Lahore&school=School",
         },
       },
       {
         bot: true,
-        text: "Reminder N1 (45m): Your starter pack is ready—unlock full access by registering.",
-        buttons: ["Register on Web"],
-        links: {
-          "Register on Web":
-            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=web_reg",
-        },
-      },
-    ],
-  },
-  lp_gen: {
-    name: "Flow C — WhatsApp → LP Generator from Book Page",
-    script: [
-      {
-        bot: true,
-        text: "Hi! I’m your assistant for lesson plans, teacher training, and school tools. I’ll send something useful right now.\nWhat’s your role?",
-        buttons: ["Teacher", "Principal", "School Owner"],
+        text: "Nudge (45m): Want to continue where you left off?",
+        buttons: ["Yes, continue", "Start over"],
       },
       {
         bot: true,
-        text: "Which city is your school in?",
-        buttons: [
-          "Lahore",
-          "Karachi",
-          "Islamabad",
-          "Rawalpindi",
-          "Faisalabad",
-          "Peshawar",
-          "Quetta",
-          "Multan",
-          "Other",
-        ],
-      },
-      {
-        bot: true,
-        text: "Type your full school name (no abbreviations).",
-        expectsInput: true,
-        suggested: "City Star School",
-      },
-      {
-        bot: true,
-        text: "Send your book page, grade, and subject.",
-        expectsInput: true,
-        suggested: "Pg 45, Grade 4 Math",
-      },
-      {
-        bot: true,
-        text: "Here’s a Grade 4 Math lesson plan for Page 45:\nhttps://tb-compliance-manager.replit.app/auth/lp/grade4-math-45.pdf",
-      },
-      {
-        bot: true,
-        text: "Does this fit your class? Need easier or harder?",
-        buttons: ["Easier", "Harder", "Looks good"],
-      },
-      {
-        bot: true,
-        text: "Get full access to all LPs and training. Register your school here:",
-        buttons: ["Register on Web", "Get another LP"],
-        links: {
-          "Register on Web":
-            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=lp_gen",
-        },
-      },
-      {
-        bot: true,
-        text: "Reminder N1 (45m): Your LP is ready—unlock full access by registering.",
-        buttons: ["Register on Web"],
-        links: {
-          "Register on Web":
-            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=lp_gen",
-        },
-      },
-      {
-        bot: true,
-        text: "Reminder N2 (24h): Keep getting new LPs weekly—register now.",
-        buttons: ["Register on Web"],
-        links: {
-          "Register on Web":
-            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=lp_gen",
-        },
-      },
-    ],
-  },
-  rumi: {
-    name: "Flow D — WhatsApp → Rumi Teaching Support",
-    script: [
-      {
-        bot: true,
-        text: "Here’s a quick answer from Rumi: Try a 3-step worked example with manipulatives, then pair practice.",
-        buttons: ["Open Rumi", "See LP sample"],
-        links: {
-          "Open Rumi":
-            "https://hellorumi.ai/?source=rumi&phone=USER_PHONE&role=teacher&city=Lahore&school=City%20Star%20School",
-        },
-      },
-      {
-        bot: true,
-        text: "Which city is your school in?",
-        buttons: [
-          "Lahore",
-          "Karachi",
-          "Islamabad",
-          "Rawalpindi",
-          "Faisalabad",
-          "Peshawar",
-          "Quetta",
-          "Multan",
-          "Other",
-        ],
-      },
-      {
-        bot: true,
-        text: "Type your full school name (no abbreviations).",
-        expectsInput: true,
-        suggested: "City Star School",
-      },
-      {
-        bot: true,
-        text: "Open Rumi for instant teaching help.",
-        buttons: ["Open Rumi", "See LP sample"],
-        links: {
-          "Open Rumi":
-            "https://hellorumi.ai/?source=rumi&phone=USER_PHONE&role=teacher&city=Lahore&school=City%20Star%20School",
-        },
-      },
-      {
-        bot: true,
-        text: "Here’s a Grade 4 Math lesson plan for Page 45:\nhttps://tb-compliance-manager.replit.app/auth/lp/grade4-math-45.pdf",
-      },
-      {
-        bot: true,
-        text: "Get full access to all LPs and training. Register your school here:",
-        buttons: ["Register on Web"],
-        links: {
-          "Register on Web":
-            "https://tb-compliance-manager.replit.app/auth?utm_source=whatsapp&utm_medium=bot&utm_campaign=rumi",
-        },
+        text: "Nudge (24h): Ready to get full access?",
+        buttons: ["Yes, continue", "Start over"],
       },
     ],
   },
 };
 
 export default function PreviewPage() {
-  const [currentFlowKey, setCurrentFlowKey] = useState("lp_gen");
+  const [currentFlowKey, setCurrentFlowKey] = useState("teacher");
   const [stepIndex, setStepIndex] = useState(0);
   const [messages, setMessages] = useState([]);
 
