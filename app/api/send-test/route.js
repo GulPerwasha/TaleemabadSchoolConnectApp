@@ -38,21 +38,34 @@ export async function POST(req) {
     },
   };
 
-  const res = await fetch(GRAPH_URL(PHONE_NUMBER_ID), {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${WABA_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const res = await fetch(GRAPH_URL(PHONE_NUMBER_ID), {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${WABA_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-  if (!res.ok) {
     const text = await res.text();
-    return NextResponse.json({ error: text }, { status: res.status });
-  }
+    if (!res.ok) {
+      // Return the exact error body from Meta for debugging
+      return NextResponse.json(
+        { error: text || "Upstream error", status: res.status },
+        { status: res.status }
+      );
+    }
 
-  const data = await res.json();
-  return NextResponse.json({ sent: true, data }, { status: 200 });
+    let data = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      data = { raw: text };
+    }
+    return NextResponse.json({ sent: true, data }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
 }
 
